@@ -10,7 +10,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isCookieExist && isLoginPage) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    return NextResponse.redirect(new URL('/', req.url))
   }
 }
 

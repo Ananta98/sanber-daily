@@ -19,13 +19,14 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { getUrlfromPrefix, showToast } from '@/lib/utils'
+import { getUrlfromPrefix } from '@/lib/utils'
 import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const loginSchema = z.object({
-  email: z.string().min(1),
+  email: z.string().min(1).email(),
   password: z.string().min(1),
 })
 
@@ -55,17 +56,13 @@ const LoginPage = () => {
         expires: response?.data?.expires,
         path: '/',
       })
-      showToast({
-        title: 'Success',
+      toast('Login Success', {
         description: response?.message,
-        isError: false,
       })
-      router.push('/')
+      router.reload()
     } else {
-      showToast({
-        title: 'Failed',
+      toast('Login Failed', {
         description: response?.message,
-        isError: true,
       })
     }
     setLoading(false)
@@ -110,7 +107,11 @@ const LoginPage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full hover:cursor-pointer">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full hover:cursor-pointer"
+            >
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" />

@@ -9,14 +9,14 @@ import { MessageCircle, ThumbsUp } from 'lucide-react'
 const PostContainer = ({
   id,
   description,
-  user_id,
-  deleted_at,
   created_at,
   likes_count,
   replies_count,
   is_like_post,
   is_own_post,
   user,
+  handleLike,
+  handleDislike,
 }: Posts) => {
   return (
     <Card className="mb-6">
@@ -47,7 +47,16 @@ const PostContainer = ({
           <Button
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-red-500 flex items-center gap-1 hover:cursor-pointer"
+            onClick={() => {
+              if (is_like_post) {
+                handleDislike(id)
+              } else {
+                handleLike(id)
+              }
+            }}
+            className={`${
+              is_like_post ? `text-red-500` : `text-gray-500`
+            } hover:text-red-500 flex items-center gap-1 hover:cursor-pointer`}
           >
             <ThumbsUp />
             <span>{likes_count}</span>

@@ -4,13 +4,12 @@ import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
 import { LogOut, UserRoundPen } from 'lucide-react'
 import { fetcher, getUrlfromPrefix } from '@/lib/utils'
 
@@ -24,7 +23,9 @@ const MainLayout = ({
   const router = useRouter()
 
   const handleLogout = async () => {
-    const response = await fetcher(getUrlfromPrefix('logout'))
+    const response = await fetcher(getUrlfromPrefix('logout'), {
+      method: 'POST',
+    })
     if (response?.success) {
       Cookies.remove('token')
       router.reload()
@@ -45,30 +46,26 @@ const MainLayout = ({
             <div className="container mx-auto flex justify-between items-center">
               <h1 className="text-xl font-bold">Sanber Daily</h1>
               <div className="flex justify-center items-center gap-2">
-                <NavigationMenu>
-                  <NavigationMenuList>
-                    <NavigationMenuItem>
-                      <NavigationMenuTrigger>
-                        <Avatar>
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <NavigationMenuLink className="flex flex-row justify-center items-center gap-4">
-                          <UserRoundPen />
-                          <span className="font-bold">Profile</span>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink
-                          onClick={handleLogout}
-                          className="flex flex-row justify-center items-center gap-4"
-                        >
-                          <LogOut />
-                          <span className="font-bold text-red-500">Logout</span>
-                        </NavigationMenuLink>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  </NavigationMenuList>
-                </NavigationMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar>
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <UserRoundPen />
+                      <span className="font-bold">Profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-red-600 cursor-pointer"
+                    >
+                      <LogOut />
+                      <span className="font-bold">Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </header>

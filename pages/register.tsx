@@ -25,19 +25,29 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
-import { cn } from '@/lib/utils'
+import { cn, getUrlfromPrefix } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 const registerSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(6),
-  dob: z.date(),
-  phone: z.string().min(0),
+  email: z.string().min(1).email(),
+  password: z.string().min(1),
+  dob: z.date().optional(),
+  phone: z
+    .string()
+    .min(0)
+    .regex(/^\d{10,15}$/, 'Invalid phone number'),
   hobby: z.string().min(0),
 })
 
 const RegisterPage = () => {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -50,8 +60,30 @@ const RegisterPage = () => {
     },
   })
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    console.log(data)
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    setLoading(true)
+    const response = await fetch(getUrlfromPrefix('register'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((res) => res.json())
+    if (response?.success) {
+      Cookies.set('token', response?.data?.token, {
+        expires: response?.data?.expires,
+        path: '/',
+      })
+      toast('Success', {
+        description: response?.message,
+      })
+      router.push('/')
+    } else {
+      toast('Failed', {
+        description: response?.message,
+      })
+    }
+    setLoading(false)
   }
 
   return (

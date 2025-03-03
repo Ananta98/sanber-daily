@@ -16,6 +16,8 @@ type Posts = {
   is_like_post: boolean
   is_own_post: boolean
   user: User
+  handleLike: (id: number) => Promise<void>
+  handleDislike: (id: number) => Promise<void>
 }
 
 export type { Posts, User }

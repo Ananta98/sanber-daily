@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import useSWR from 'swr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
@@ -11,9 +12,12 @@ import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Textarea } from '@/components/ui/textarea'
-import useSWR from 'swr'
 import { fetcher, getUrlfromPrefix } from '@/lib/utils'
 import PostContainer from '@/components/post-container'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
+import Cookies from 'js-cookie'
 
 const postSchema = z.object({
   description: z.string().min(1),
@@ -24,6 +28,7 @@ export default function Home() {
     getUrlfromPrefix('posts?type=all'),
     fetcher,
   )
+  const [loadingSubmit, setLoadingSubmit] = useState(false)
 
   const form = useForm<z.infer<typeof postSchema>>({
     resolver: zodResolver(postSchema),
@@ -32,7 +37,49 @@ export default function Home() {
     },
   })
 
-  const onSubmit = (data: z.infer<typeof postSchema>) => {
+  const onSubmit = async (data: z.infer<typeof postSchema>) => {
+    setLoadingSubmit(true)
+    const response = await fetch(getUrlfromPrefix('post'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+      body: JSON.stringify(data),
+    }).then((res) => res.json())
+    toast('Add Post Success', {
+      description: response?.message,
+    })
+    form.reset()
+    setLoadingSubmit(false)
+    mutate()
+  }
+
+  const likePost = async (id: number) => {
+    const response = await fetch(getUrlfromPrefix(`likes/post/${id}`), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    }).then((res) => res.json())
+    toast('Like Post Success', {
+      description: response?.message,
+    })
+    mutate()
+  }
+
+  const dislikePost = async (id: number) => {
+    const response = await fetch(getUrlfromPrefix(`unlikes/post/${id}`), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    }).then((res) => res.json())
+    toast('Dislike Post Success', {
+      description: response?.message,
+    })
     mutate()
   }
 
@@ -57,8 +104,15 @@ export default function Home() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Post
+              <Button disabled={loadingSubmit} type="submit" className="w-full">
+                {loadingSubmit ? (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Post'
+                )}
               </Button>
             </form>
           </Form>
@@ -66,9 +120,15 @@ export default function Home() {
       </Card>
       {isLoading && <p>Loading...</p>}
       <div className="flex flex-col gap-4">
-        {data?.data.map((post: any) => (
-          <PostContainer key={post.id} {...post} />
-        ))}
+        {data?.data &&
+          data?.data.map((post: any) => (
+            <PostContainer
+              key={post.id}
+              {...post}
+              handleLike={likePost}
+              handleDislike={dislikePost}
+            />
+          ))}
       </div>
     </div>
   )
