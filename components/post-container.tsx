@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from './ui/button'
 import { format } from 'date-fns'
 import { MessageCircle, ThumbsUp } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const PostContainer = ({
   id,
@@ -18,6 +19,8 @@ const PostContainer = ({
   handleLike,
   handleDislike,
 }: Posts) => {
+  const router = useRouter()
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -54,16 +57,17 @@ const PostContainer = ({
                 handleLike(id)
               }
             }}
-            className={`${
-              is_like_post ? `text-red-500` : `text-gray-500`
-            } hover:text-red-500 flex items-center gap-1 hover:cursor-pointer`}
+            className=" hover:text-red-500 flex items-center gap-1 hover:cursor-pointer"
           >
-            <ThumbsUp />
+            <ThumbsUp fill={`${is_like_post ? `red` : `gray-500`}`} />
             <span>{likes_count}</span>
           </Button>
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => {
+              router.push(`/post/${id}`)
+            }}
             className="text-gray-500 hover:text-green-500 flex items-center gap-1 hover:cursor-pointer"
           >
             <MessageCircle />

@@ -24,7 +24,7 @@ const postSchema = z.object({
 })
 
 export default function Home() {
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, isLoading, mutate } = useSWR(
     getUrlfromPrefix('posts?type=all'),
     fetcher,
   )
@@ -47,7 +47,7 @@ export default function Home() {
       },
       body: JSON.stringify(data),
     }).then((res) => res.json())
-    toast('Add Post Success', {
+    toast.success('Add Post Success', {
       description: response?.message,
     })
     form.reset()
@@ -63,7 +63,7 @@ export default function Home() {
         Authorization: `Bearer ${Cookies.get('token')}`,
       },
     }).then((res) => res.json())
-    toast('Like Post Success', {
+    toast.success('Like Post Success', {
       description: response?.message,
     })
     mutate()
@@ -77,7 +77,7 @@ export default function Home() {
         Authorization: `Bearer ${Cookies.get('token')}`,
       },
     }).then((res) => res.json())
-    toast('Dislike Post Success', {
+    toast.success('Dislike Post Success', {
       description: response?.message,
     })
     mutate()
