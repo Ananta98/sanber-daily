@@ -102,11 +102,7 @@ const RegisterPage = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="johndoe@mail.com"
-                      type="text"
-                      {...field}
-                    />
+                    <Input placeholder="John Doe" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -209,7 +205,11 @@ const RegisterPage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full hover:cursor-pointer">
+            <Button
+              disabled={loading}
+              type="submit"
+              className="w-full hover:cursor-pointer"
+            >
               Sign Up
             </Button>
           </form>

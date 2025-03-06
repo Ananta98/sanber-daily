@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { LogOut, UserRoundPen } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { getUrlfromPrefix } from '@/lib/utils'
 import { Toaster } from '@/components/ui/sonner'
 import { useProfileContext } from '@/context'
@@ -85,13 +85,6 @@ const MainLayout = ({
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem
-                    onClick={() => router.push('/profile')}
-                    className="cursor-pointer"
-                  >
-                    <UserRoundPen />
-                    <span className="font-bold">Profile</span>
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleLogout}
                     className="text-red-600 cursor-pointer"

@@ -1,7 +1,9 @@
 type User = {
-  id: number
   name: string
   email: string
+  dob: Date | null
+  phone: string | null
+  hobby: string | null
 }
 
 type Posts = {

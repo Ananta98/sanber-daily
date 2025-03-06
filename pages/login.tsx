@@ -121,7 +121,11 @@ const LoginPage = () => {
                 'Sign In'
               )}
             </Button>
-            <Button variant="outline" className="w-full hover:cursor-pointer">
+            <Button
+              onClick={() => router.push('/register')}
+              variant="outline"
+              className="w-full hover:cursor-pointer"
+            >
               Sign Up
             </Button>
           </form>
