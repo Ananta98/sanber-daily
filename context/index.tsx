@@ -4,6 +4,7 @@ import { fetcher, getUrlfromPrefix } from '@/lib/utils'
 import { User } from '@/lib/types'
 
 export const ProfileContext = createContext<User>({
+  id: 0,
   name: '',
   email: '',
   dob: new Date(),
