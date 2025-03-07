@@ -113,7 +113,7 @@ const PostComments = () => {
       <div className="space-y-4">
         {commentsData?.data.length > 0 ? (
           commentsData?.data.map((comment: Replies) => (
-            <CommentContainer {...comment} />
+            <CommentContainer key={comment.id} {...comment} />
           ))
         ) : (
           <div className="flex flex-col justify-center items-center">
