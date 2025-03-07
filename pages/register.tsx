@@ -23,12 +23,11 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn, getUrlfromPrefix } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { useRouter } from 'next/router'
-import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 import { useState } from 'react'
 
@@ -39,9 +38,10 @@ const registerSchema = z.object({
   dob: z.date().optional(),
   phone: z
     .string()
-    .min(0)
-    .regex(/^\d{10,15}$/, 'Invalid phone number'),
-  hobby: z.string().min(0),
+    .min(1)
+    .regex(/^\d{10,15}$/, 'Invalid phone number')
+    .optional(),
+  hobby: z.string().min(1),
 })
 
 const RegisterPage = () => {
@@ -62,6 +62,8 @@ const RegisterPage = () => {
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setLoading(true)
+    console.log(data)
+
     const response = await fetch(getUrlfromPrefix('register'), {
       method: 'POST',
       headers: {
@@ -70,14 +72,10 @@ const RegisterPage = () => {
       body: JSON.stringify(data),
     }).then((res) => res.json())
     if (response?.success) {
-      Cookies.set('token', response?.data?.token, {
-        expires: response?.data?.expires,
-        path: '/',
-      })
       toast('Success', {
         description: response?.message,
       })
-      router.push('/')
+      router.push('/login')
     } else {
       toast('Failed', {
         description: response?.message,
@@ -210,7 +208,14 @@ const RegisterPage = () => {
               type="submit"
               className="w-full hover:cursor-pointer"
             >
-              Sign Up
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Sign Up'
+              )}
             </Button>
           </form>
         </Form>

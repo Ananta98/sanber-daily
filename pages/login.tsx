@@ -121,15 +121,15 @@ const LoginPage = () => {
                 'Sign In'
               )}
             </Button>
-            <Button
-              onClick={() => router.push('/register')}
-              variant="outline"
-              className="w-full hover:cursor-pointer"
-            >
-              Sign Up
-            </Button>
           </form>
         </Form>
+        <Button
+          onClick={() => router.push('/register')}
+          variant="outline"
+          className="w-full hover:cursor-pointer"
+        >
+          Sign Up
+        </Button>
       </CardContent>
     </Card>
   )
