@@ -35,13 +35,9 @@ const registerSchema = z.object({
   name: z.string().min(1),
   email: z.string().min(1).email(),
   password: z.string().min(1),
-  dob: z.date().optional(),
-  phone: z
-    .string()
-    .min(1)
-    .regex(/^\d{10,15}$/, 'Invalid phone number')
-    .optional(),
-  hobby: z.string().min(1),
+  dob: z.date(),
+  phone: z.string().min(0),
+  hobby: z.string().min(0),
 })
 
 const RegisterPage = () => {
@@ -62,14 +58,20 @@ const RegisterPage = () => {
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setLoading(true)
-    console.log(data)
 
     const response = await fetch(getUrlfromPrefix('register'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        dob: format(data.dob, 'yyyy-MM-dd'),
+        phone: data.phone,
+        hobby: data.hobby,
+      }),
     }).then((res) => res.json())
     if (response?.success) {
       toast('Success', {
